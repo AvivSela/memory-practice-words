@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>מחולל סטים - משחק חמש מילים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap">
+<style>
+  :root {
+    --bg: #FBF6EE;
+    --card: #FFFFFF;
+    --ink: #2B2620;
+    --muted: #5C5347;
+    --accent: #2F6F66;
+    --accent-soft: #E4EFEC;
+    --accent-ink: #1F4D46;
+    --border: #E4DDD0;
+    --border-soft: #D9D0C0;
+    --good: #2F6F66;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #201D18;
+      --card: #2A2620;
+      --ink: #F1EAE0;
+      --muted: #C9BFAE;
+      --accent: #6FBFAE;
+      --accent-soft: #2A3B37;
+      --accent-ink: #B7E4D8;
+      --border: #453F35;
+      --border-soft: #504A3E;
+      --good: #6FBFAE;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #201D18;
+    --card: #2A2620;
+    --ink: #F1EAE0;
+    --muted: #C9BFAE;
+    --accent: #6FBFAE;
+    --accent-soft: #2A3B37;
+    --accent-ink: #B7E4D8;
+    --border: #453F35;
+    --border-soft: #504A3E;
+    --good: #6FBFAE;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Assistant', 'Segoe UI', system-ui, sans-serif;
+    font-size: 19px;
+    padding: 32px 16px 60px;
+    display: flex;
+    justify-content: center;
+  }
+  .wrap { max-width: 640px; width: 100%; }
+  .icon-badge {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin: 0 0 6px;
+    text-align: center;
+  }
+  .sub {
+    text-align: center;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 1.05rem;
+    margin: 0 0 28px;
+  }
+  .card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 22px 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 10px rgba(43,38,32,0.05);
+  }
+  .controls {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .control-label {
+    font-size: 1rem;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .seg {
+    display: flex;
+    gap: 10px;
+  }
+  .seg button {
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-height: 52px;
+    min-width: 52px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .seg button.active {
+    border-color: transparent;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+  }
+  .generate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 22px;
+    min-height: 68px;
+  }
+  .generate-btn:active { opacity: 0.85; }
+  .words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    min-height: 56px;
+  }
+  .word-pill {
+    background: var(--card);
+    color: var(--muted);
+    padding: 12px 20px;
+    border-radius: 14px;
+    font-size: 1.35rem;
+    font-weight: 600;
+    border: 2px dashed var(--border-soft);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+  }
+  .word-pill:active { transform: scale(0.96); }
+  .word-pill.remembered {
+    background: var(--accent-soft);
+    border: 2px solid var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+  }
+  .word-pill.remembered::before {
+    content: "✓ ";
+  }
+  .placeholder {
+    color: var(--muted);
+    text-align: center;
+    width: 100%;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  .rules-toggle {
+    text-align: center;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 8px;
+    margin-top: -6px;
+    margin-bottom: 18px;
+  }
+  ul.rules {
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.7;
+    padding-inline-start: 20px;
+    margin: 0;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 3px 12px;
+    margin-inline-end: 6px;
+    margin-bottom: 8px;
+  }
+  .foot {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 10px;
+  }
+  .score-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .score-card .instructions {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .score-card .live-count {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .score-card button {
+    padding: 18px;
+    border-radius: 16px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.15rem;
+    font-weight: 700;
+    width: 100%;
+    min-height: 60px;
+  }
+  .score-card button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  .score-saved-note {
+    width: 100%;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .history-toggle {
+    text-align: center;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .history-header h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  .clear-history-btn {
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .history-empty {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 1rem;
+    text-align: center;
+    padding: 8px 0;
+  }
+  .history-item {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .history-item .row1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .history-item .meta {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .history-item .score-badge {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 6px 14px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .history-item .score-badge.low {
+    background: #F3E7DA;
+    color: #9A5A2A;
+  }
+  .history-item .hwords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  .history-item .hword {
+    padding: 3px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .history-item .hword.got {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-weight: 700;
+  }
+  .history-item .row2 {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+  .history-item .del-btn {
+    border: none;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="icon-badge">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.5-4.5-2-7-2v14c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V4c-2.5 0-5 .5-7 2Z"/><path d="M12 6v14"/></svg>
+  </div>
+  <h1>מחולל סטים למשחק "חמש מילים"</h1>
+  <p class="sub">בוחר סט מילים מאוזן: קונקרטיות, ללא קשר סמנטי, גיוון פונטי ואיזון קושי</p>
+
+  <div class="controls">
+    <div class="control-group">
+      <span class="control-label">כמה מילים</span>
+      <div class="seg" id="countSeg">
+        <button data-val="5" class="active">5</button>
+        <button data-val="6">6</button>
+        <button data-val="7">7</button>
+        <button data-val="8">8</button>
+      </div>
+    </div>
+    <div class="control-group">
+      <span class="control-label">רמת קושי</span>
+      <div class="seg" id="levelSeg">
+        <button data-val="easy" class="active">קל</button>
+        <button data-val="medium">בינוני</button>
+        <button data-val="hard">מאתגר</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="generate-btn" id="genBtn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    <span>צור סט חדש</span>
+  </button>
+
+  <div class="card">
+    <div class="words" id="wordsArea">
+      <div class="placeholder">לחצו על "צור סט חדש" כדי לקבל סט מילים</div>
+    </div>
+  </div>
+
+  <div class="card score-card" id="scoreCard" style="display:none;">
+    <div class="instructions">לחצו על המילים שזכרתם</div>
+    <div class="live-count" id="liveCount">0 / 5 זכורות</div>
+    <button id="saveScoreBtn">שמור תוצאה</button>
+    <div class="score-saved-note" id="scoreSavedNote" style="display:none;">✓ נשמר בהיסטוריה</div>
+  </div>
+
+  <div class="rules-toggle" id="rulesToggle">למה הסט הזה נבחר? (הצג/הסתר כללים)</div>
+  <div class="card" id="rulesCard" style="display:none;">
+    <ul class="rules">
+      <li>כל מילה נבחרת מקטגוריה סמנטית אחרת - כדי למנוע "קיבוץ" קל מדי בזיכרון.</li>
+      <li>המילים מוחשיות וניתנות לדימוי חזותי (עדיפות ל"story method").</li>
+      <li>נמנעים משתי מילים שמתחילות באותה אות, כדי לא לתת רמז פונטי מקרי.</li>
+      <li>ברמה "קל" - יותר מילים "עסיסיות" שקל לשלב בסיפור מיידי.</li>
+      <li>ברמה "מאתגר" - יותר מילים ניטרליות שדורשות מאמץ קוגניטיבי לשילוב.</li>
+    </ul>
+  </div>
+
+  <div class="history-toggle" id="historyToggle">הצג תוצאות קודמות</div>
+  <div class="card" id="historyCardWrap" style="display:none;">
+    <div class="history-header">
+      <h2>תוצאות קודמות</h2>
+      <button class="clear-history-btn" id="clearHistoryBtn">נקה היסטוריה</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  <div class="foot">אפשר ליצור כמה סטים ולשמור את המועדפים לפני המפגש</div>
+</div>
+
+<script>
+// Word bank organized by semantic category, each word tagged for phonetic first-letter
+// and "juiciness" (vivid/story-friendly vs neutral/effortful)
+const bank = {
+  animals: [{w:"כלב",j:1},{w:"ציפור",j:1},{w:"דג",j:0},{w:"פרפר",j:1},{w:"עכבר",j:0},{w:"חתול",j:0},{w:"סוס",j:0},{w:"פרה",j:0},{w:"כבשה",j:0},{w:"עז",j:0},{w:"תרנגול",j:0},{w:"ברווז",j:0},{w:"אווז",j:0},{w:"נשר",j:1},{w:"יונה",j:0},{w:"דרור",j:0},{w:"זרזיר",j:0},{w:"חסידה",j:1},{w:"ינשוף",j:1},{w:"עורב",j:1},{w:"חולדה",j:0},{w:"ארנב",j:0},{w:"שועל",j:1},{w:"זאב",j:1},{w:"דוב",j:1},{w:"אריה",j:1},{w:"נמר",j:1},{w:"פיל",j:1},{w:"קוף",j:1},{w:"ג'ירפה",j:0},{w:"זברה",j:0},{w:"קנגורו",j:0},{w:"לווייתן",j:1},{w:"דולפין",j:1},{w:"כריש",j:1},{w:"צב",j:0},{w:"נחש",j:1},{w:"לטאה",j:0},{w:"צפרדע",j:0},{w:"דבורה",j:1},{w:"נמלה",j:1},{w:"זבוב",j:0},{w:"יתוש",j:1},{w:"עכביש",j:1},{w:"עקרב",j:1},{w:"תוכי",j:0},{w:"סנאי",j:0},{w:"קיפוד",j:0},{w:"חזיר",j:1},{w:"סרטן",j:0},{w:"חלזון",j:0},{w:"טווס",j:1},{w:"בז",j:0},{w:"עטלף",j:1},{w:"חמור",j:1},{w:"גמל",j:0},{w:"נמייה",j:0},{w:"תן",j:0},{w:"דביבון",j:0},{w:"חרגול",j:0},{w:"חיפושית",j:0},{w:"תולעת",j:0},{w:"צדפה",j:0}],
+  objects: [{w:"מפתח",j:0},{w:"כפתור",j:0},{w:"שעון",j:0},{w:"מטריה",j:1},{w:"מברשת",j:0},{w:"עט",j:0},{w:"עיפרון",j:0},{w:"מחברת",j:0},{w:"ספר",j:1},{w:"ארנק",j:0},{w:"תיק",j:1},{w:"משקפיים",j:0},{w:"מטרייה",j:0},{w:"כובע",j:1},{w:"נעל",j:1},{w:"חגורה",j:0},{w:"מספריים",j:0},{w:"סכין",j:1},{w:"מסרק",j:0},{w:"מראה",j:1},{w:"נר",j:1},{w:"פנס",j:0},{w:"סוללה",j:0},{w:"טלפון",j:1},{w:"מטבע",j:0},{w:"שטר",j:0},{w:"עגיל",j:0},{w:"שרשרת",j:1},{w:"סבון",j:0},{w:"מגבת",j:0},{w:"תער",j:1},{w:"כפפה",j:0},{w:"צעיף",j:0},{w:"חבל",j:1},{w:"סרט",j:0},{w:"נייר",j:0},{w:"מדבקה",j:0},{w:"בלון",j:1},{w:"מחט",j:1},{w:"חוט",j:0},{w:"אבזם",j:0},{w:"אוזניות",j:1},{w:"מטען",j:0},{w:"שקית",j:0},{w:"קופסה",j:1},{w:"מזוודה",j:1},{w:"דרכון",j:1},{w:"מדחום",j:0},{w:"משקפת",j:1},{w:"מקל",j:0},{w:"סל",j:0},{w:"כד",j:1},{w:"עגלה",j:1},{w:"אופניים",j:1},{w:"גלגל",j:0},{w:"מברג",j:0},{w:"פטיש",j:1},{w:"מסמר",j:0},{w:"בורג",j:0},{w:"מנעול",j:1},{w:"שלט",j:0},{w:"מצית",j:1},{w:"בול",j:1},{w:"סרגל",j:0}],
+  nature: [{w:"ים",j:1},{w:"הר",j:0},{w:"נהר",j:0},{w:"פרח",j:1},{w:"עץ",j:0},{w:"שמש",j:0},{w:"ירח",j:0},{w:"כוכב",j:0},{w:"אגם",j:0},{w:"גבעה",j:0},{w:"עמק",j:0},{w:"מדבר",j:1},{w:"יער",j:1},{w:"עלה",j:0},{w:"שורש",j:0},{w:"ענף",j:0},{w:"דשא",j:0},{w:"חול",j:0},{w:"אבן",j:0},{w:"סלע",j:0},{w:"מערה",j:1},{w:"מפל",j:1},{w:"אי",j:1},{w:"חוף",j:1},{w:"אדמה",j:0},{w:"בוץ",j:0},{w:"פרג",j:1},{w:"ורד",j:1},{w:"חבצלת",j:0},{w:"אלון",j:0},{w:"ברוש",j:0},{w:"דקל",j:0},{w:"זית",j:0},{w:"גזע",j:0},{w:"יהלום",j:1},{w:"זהב",j:1},{w:"פחם",j:1},{w:"חרסית",j:0},{w:"נחל",j:0},{w:"מעיין",j:0},{w:"אצה",j:0},{w:"קוץ",j:0},{w:"פטריה",j:0},{w:"שיח",j:0},{w:"גביש",j:1},{w:"חלוק",j:0},{w:"גל",j:1},{w:"חמנייה",j:1},{w:"יסמין",j:1},{w:"נרקיס",j:1},{w:"שקד",j:1},{w:"תאנה",j:1},{w:"ליבנה",j:0},{w:"אשוח",j:0},{w:"קקטוס",j:1},{w:"שונית",j:1},{w:"גבעול",j:0},{w:"אודם",j:1},{w:"ספיר",j:0},{w:"עשב",j:0},{w:"קליפה",j:0},{w:"טרשים",j:0}],
+  places: [{w:"גשר",j:0},{w:"תחנה",j:0},{w:"גינה",j:1},{w:"מרפסת",j:0},{w:"שוק",j:1},{w:"בית",j:0},{w:"דירה",j:0},{w:"חדר",j:0},{w:"מטבח",j:0},{w:"סלון",j:0},{w:"חצר",j:0},{w:"גן",j:1},{w:"פארק",j:0},{w:"כיכר",j:1},{w:"רחוב",j:0},{w:"חנות",j:0},{w:"קניון",j:0},{w:"בנק",j:0},{w:"דואר",j:0},{w:"מרפאה",j:0},{w:"כנסייה",j:1},{w:"מסגד",j:1},{w:"נמל",j:1},{w:"כביש",j:0},{w:"מנהרה",j:1},{w:"מגדל",j:0},{w:"ארמון",j:1},{w:"מצודה",j:1},{w:"טירה",j:1},{w:"תיאטרון",j:1},{w:"קולנוע",j:1},{w:"מוזיאון",j:1},{w:"ספרייה",j:0},{w:"אולם",j:0},{w:"איצטדיון",j:1},{w:"בריכה",j:1},{w:"מסעדה",j:0},{w:"פונדק",j:1},{w:"מלון",j:1},{w:"חווה",j:1},{w:"כפר",j:0},{w:"עיר",j:1},{w:"מדינה",j:1},{w:"שכונה",j:0},{w:"מפעל",j:0},{w:"משרד",j:0},{w:"בניין",j:0},{w:"חניה",j:0},{w:"מוסך",j:0},{w:"כיתה",j:0},{w:"אוניברסיטה",j:0},{w:"מכללה",j:0},{w:"ישיבה",j:1},{w:"מנזר",j:1},{w:"מגרש",j:0},{w:"חורשה",j:1},{w:"מסדרון",j:0},{w:"מרתף",j:0},{w:"חניון",j:0},{w:"כלא",j:1},{w:"עירייה",j:0},{w:"משטרה",j:1}],
+  food: [{w:"תפוח",j:0},{w:"לחם",j:0},{w:"דבש",j:1},{w:"קפה",j:1},{w:"ביצה",j:0},{w:"חלב",j:0},{w:"גבינה",j:0},{w:"חמאה",j:0},{w:"שמן",j:0},{w:"סוכר",j:0},{w:"מלח",j:0},{w:"קמח",j:0},{w:"אורז",j:0},{w:"פסטה",j:0},{w:"תפוז",j:0},{w:"בננה",j:1},{w:"ענב",j:1},{w:"אבטיח",j:1},{w:"אגס",j:0},{w:"לימון",j:1},{w:"תות",j:1},{w:"אננס",j:1},{w:"מנגו",j:0},{w:"שזיף",j:0},{w:"אפרסק",j:0},{w:"משמש",j:0},{w:"רימון",j:1},{w:"תמר",j:1},{w:"קוקוס",j:0},{w:"בצל",j:0},{w:"שום",j:0},{w:"גזר",j:0},{w:"בטטה",j:0},{w:"עגבניה",j:0},{w:"מלפפון",j:0},{w:"פלפל",j:1},{w:"חסה",j:0},{w:"כרוב",j:0},{w:"קישוא",j:0},{w:"חציל",j:1},{w:"פטרוזיליה",j:0},{w:"בשר",j:1},{w:"עוף",j:1},{w:"נקניקיה",j:0},{w:"ריבה",j:0},{w:"שוקולד",j:1},{w:"עוגה",j:1},{w:"עוגייה",j:1},{w:"גלידה",j:1},{w:"ממתק",j:1},{w:"מרק",j:1},{w:"סלט",j:0},{w:"חביתה",j:1},{w:"פיצה",j:1},{w:"המבורגר",j:1},{w:"מיץ",j:0},{w:"תה",j:0},{w:"יין",j:1},{w:"בירה",j:1},{w:"מים",j:0},{w:"לחמנייה",j:0},{w:"בורקס",j:1},{w:"חומוס",j:1}],
+  people_life: [{w:"חתונה",j:1},{w:"מכתב",j:0},{w:"נעליים",j:0},{w:"כרטיס",j:0},{w:"תמונה",j:1},{w:"גירושין",j:1},{w:"לוויה",j:1},{w:"ברית",j:1},{w:"לידה",j:1},{w:"אלבום",j:0},{w:"יומן",j:0},{w:"תעודה",j:0},{w:"מתנה",j:0},{w:"חופה",j:1},{w:"טבעת",j:1},{w:"קבר",j:1},{w:"חתן",j:1},{w:"כלה",j:1},{w:"תינוק",j:1},{w:"ילד",j:0},{w:"ילדה",j:0},{w:"נער",j:0},{w:"נערה",j:0},{w:"אבא",j:0},{w:"אמא",j:0},{w:"סבא",j:0},{w:"סבתא",j:0},{w:"אח",j:0},{w:"אחות",j:0},{w:"דוד",j:0},{w:"דודה",j:0},{w:"נכד",j:0},{w:"נכדה",j:0},{w:"חבר",j:0},{w:"חברה",j:0},{w:"שכן",j:0},{w:"שכנה",j:0},{w:"מורה",j:0},{w:"תלמיד",j:0},{w:"רופא",j:0},{w:"עובד",j:0},{w:"בוס",j:0},{w:"חייל",j:1},{w:"שוטר",j:1},{w:"כבאי",j:1},{w:"נהג",j:0},{w:"טבח",j:0},{w:"אמן",j:1},{w:"זמר",j:1},{w:"שחקן",j:1},{w:"סופר",j:1},{w:"מסיבה",j:1},{w:"חג",j:1},{w:"טיול",j:1},{w:"מסע",j:1},{w:"פרידה",j:1},{w:"פגישה",j:0},{w:"ביקור",j:0},{w:"חיבוק",j:1},{w:"נשיקה",j:1},{w:"דמעה",j:1},{w:"חיוך",j:0},{w:"צחוק",j:0},{w:"גמלאי",j:0}],
+  household: [{w:"כיסא",j:0},{w:"מנורה",j:0},{w:"מגירה",j:0},{w:"אח",j:0},{w:"וילון",j:0},{w:"שולחן",j:0},{w:"מיטה",j:1},{w:"ארון",j:1},{w:"ספה",j:1},{w:"מדף",j:0},{w:"שטיח",j:0},{w:"כרית",j:1},{w:"שמיכה",j:1},{w:"סדין",j:0},{w:"מקרר",j:0},{w:"תנור",j:1},{w:"כיריים",j:0},{w:"מיקרוגל",j:0},{w:"מדיח",j:0},{w:"כביסה",j:0},{w:"מטאטא",j:0},{w:"דלי",j:0},{w:"מגב",j:0},{w:"סמרטוט",j:0},{w:"קערה",j:0},{w:"צלחת",j:0},{w:"כוס",j:1},{w:"כף",j:0},{w:"מזלג",j:0},{w:"סיר",j:1},{w:"מחבת",j:0},{w:"קומקום",j:1},{w:"מגש",j:0},{w:"מפית",j:0},{w:"מפה",j:0},{w:"אגרטל",j:1},{w:"שידה",j:1},{w:"מזגן",j:0},{w:"תריס",j:0},{w:"חלון",j:1},{w:"דלת",j:1},{w:"קיר",j:0},{w:"תקרה",j:0},{w:"רצפה",j:0},{w:"מדרגה",j:1},{w:"ארונית",j:0},{w:"וו",j:0},{w:"עציץ",j:1},{w:"אקווריום",j:1},{w:"רדיו",j:1},{w:"טלוויזיה",j:1},{w:"כוננית",j:0},{w:"שרפרף",j:0},{w:"נדנדה",j:1},{w:"עריסה",j:1},{w:"ידית",j:0},{w:"צינור",j:0},{w:"ברז",j:0},{w:"כיור",j:0},{w:"אמבטיה",j:1},{w:"מקלחת",j:1},{w:"אסלה",j:0},{w:"ספוג",j:0}],
+  misc: [{w:"גשם",j:1},{w:"אש",j:1},{w:"רעם",j:1},{w:"צל",j:0},{w:"קול",j:0},{w:"עשן",j:1},{w:"אור",j:0},{w:"חושך",j:1},{w:"חום",j:0},{w:"קור",j:0},{w:"ריח",j:1},{w:"טעם",j:0},{w:"מגע",j:0},{w:"צליל",j:0},{w:"הד",j:1},{w:"רעש",j:1},{w:"שקט",j:0},{w:"ניצוץ",j:1},{w:"להבה",j:1},{w:"גחלת",j:0},{w:"אבק",j:0},{w:"פיח",j:0},{w:"קיטור",j:0},{w:"קצף",j:0},{w:"אדים",j:0},{w:"צללית",j:1},{w:"הבזק",j:1},{w:"זוהר",j:1},{w:"רטט",j:0},{w:"רעד",j:0},{w:"פיצוץ",j:1},{w:"שריפה",j:0},{w:"שלג",j:1},{w:"ברד",j:0},{w:"רוח",j:1},{w:"ברק",j:1},{w:"טל",j:0},{w:"ערפל",j:1},{w:"שלולית",j:0},{w:"קרח",j:0},{w:"קשת",j:1},{w:"שקיעה",j:1},{w:"זריחה",j:1},{w:"חשמל",j:0},{w:"מגנט",j:0},{w:"מרקם",j:0},{w:"זרם",j:0},{w:"נפילה",j:1},{w:"סערה",j:1},{w:"שיטפון",j:0},{w:"בצורת",j:0},{w:"קרן",j:0},{w:"זיעה",j:0},{w:"דם",j:1},{w:"נשימה",j:0},{w:"שיעול",j:0},{w:"עיטוש",j:0},{w:"פעימה",j:0},{w:"קרינה",j:0},{w:"גאות",j:0},{w:"שפל",j:0},{w:"צביטה",j:0},{w:"עקצוץ",j:0}]
+};
+
+const categories = Object.keys(bank);
+let count = 5;
+let level = "easy";
+const LEVELS = ["easy", "medium", "hard"];
+
+// Seeded PRNG (mulberry32) so a given seed always reproduces the same
+// sequence of "random" draws, which is what makes the set reproducible
+// from a single number.
+function mulberry32(seed) {
+  let t = seed >>> 0;
+  return function () {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Packs seed + count + level into one human-shareable number, and back.
+// Encoding count/level into the code (not just the seed) means the code
+// alone fully determines the set, regardless of what's currently selected
+// in the UI.
+function encodeCode(seed, cnt, lvl) {
+  const lvlIdx = LEVELS.indexOf(lvl);
+  return seed * 100 + cnt * 10 + lvlIdx;
+}
+function decodeCode(code) {
+  const lvlIdx = code % 10;
+  const cnt = Math.floor(code / 10) % 10;
+  const seed = Math.floor(code / 100);
+  return {
+    seed,
+    count: [5, 6, 7, 8].includes(cnt) ? cnt : 5,
+    level: LEVELS[lvlIdx] || "easy"
+  };
+}
+
+document.getElementById("countSeg").addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
+  count = parseInt(e.target.dataset.val);
+  setActive("countSeg", e.target);
+});
+document.getElementById("levelSeg").addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
+  level = e.target.dataset.val;
+  setActive("levelSeg", e.target);
+});
+document.getElementById("rulesToggle").addEventListener("click", () => {
+  const c = document.getElementById("rulesCard");
+  c.style.display = c.style.display === "none" ? "block" : "none";
+});
+document.getElementById("historyToggle").addEventListener("click", () => {
+  const c = document.getElementById("historyCardWrap");
+  const showing = c.style.display !== "none";
+  c.style.display = showing ? "none" : "block";
+  document.getElementById("historyToggle").textContent = showing ? "הצג תוצאות קודמות" : "הסתר תוצאות קודמות";
+});
+
+function setActive(segId, btn) {
+  document.querySelectorAll("#" + segId + " button").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+function shuffle(arr, rng) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Pure function: same seed + count + level always yields the same words.
+function buildSet(seed, cnt, lvl) {
+  const rng = mulberry32(seed);
+  const chosenCats = shuffle(categories, rng).slice(0, Math.min(cnt, categories.length));
+  // if count exceeds categories, allow repeats across categories in a second pass
+  while (chosenCats.length < cnt) {
+    chosenCats.push(categories[chosenCats.length % categories.length]);
+  }
+  let picks = chosenCats.map(cat => {
+    const pool = bank[cat];
+    return pool[Math.floor(rng() * pool.length)];
+  });
+
+  // adjust juiciness balance by level (done before the letter check, since
+  // the letter check is the hard constraint and must have the final say)
+  const juicyTarget = lvl === "easy" ? Math.ceil(cnt * 0.6)
+                     : lvl === "medium" ? Math.round(cnt * 0.4)
+                     : Math.floor(cnt * 0.2);
+
+  balanceJuiciness(picks, chosenCats, juicyTarget);
+
+  // final, authoritative pass: guarantee no two words share a first letter
+  // (and no word repeats), replacing any conflict with a same-category
+  // alternative — same juiciness where possible, otherwise any free word
+  fixDuplicateLetters(picks, chosenCats, rng);
+
+  return picks.map(p => p.w);
+}
+
+function generateSet() {
+  const seed = Math.floor(Math.random() * 1e9);
+  applyGeneratedSet(seed, count, level);
+}
+
+let currentSet = null; // {code, words, count, level} for the set currently on screen
+const LEVEL_LABELS = { easy: "קל", medium: "בינוני", hard: "מאתגר" };
+const HISTORY_KEY = "fiveWordsHistory";
+
+function applyGeneratedSet(seed, cnt, lvl) {
+  const words = buildSet(seed, cnt, lvl);
+  renderWords(words);
+  const code = encodeCode(seed, cnt, lvl);
+
+  currentSet = { code, words, count: cnt, level: lvl };
+
+  document.getElementById("scoreCard").style.display = "flex";
+  updateLiveCount();
+  document.getElementById("scoreSavedNote").style.display = "none";
+  document.getElementById("saveScoreBtn").disabled = false;
+}
+
+function updateLiveCount() {
+  const total = currentSet ? currentSet.count : 0;
+  const remembered = document.querySelectorAll("#wordsArea .word-pill.remembered").length;
+  document.getElementById("liveCount").textContent = remembered + " / " + total + " זכורות";
+}
+
+function fixDuplicateLetters(picks, cats, rng) {
+  const usedLetters = new Set();
+  for (let i = 0; i < picks.length; i++) {
+    let letter = picks[i].w[0];
+    if (usedLetters.has(letter)) {
+      const cat = cats[i];
+      const currentJuicy = picks[i].j;
+      const pickedWords = picks.map(p => p.w);
+      let candidates = bank[cat].filter(o =>
+        !usedLetters.has(o.w[0]) && o.j === currentJuicy && !pickedWords.includes(o.w));
+      if (!candidates.length) {
+        candidates = bank[cat].filter(o =>
+          !usedLetters.has(o.w[0]) && !pickedWords.includes(o.w));
+      }
+      if (candidates.length) {
+        picks[i] = candidates[Math.floor(rng() * candidates.length)];
+        letter = picks[i].w[0];
+      }
+      // with 60+ words per category this should always find a candidate;
+      // if it somehow can't, the word is left as-is rather than crashing
+    }
+    usedLetters.add(letter);
+  }
+}
+
+function balanceJuiciness(picks, cats, target) {
+  let current = picks.filter(p => p.j === 1).length;
+  let tries = 0;
+  while (current !== target && tries < 40) {
+    const wantJuicy = current < target;
+    const idx = picks.findIndex(p => wantJuicy ? p.j === 0 : p.j === 1);
+    if (idx === -1) break;
+    const cat = cats[idx];
+    const pickedWords = picks.map(p => p.w);
+    const alt = bank[cat].find(o => (wantJuicy ? o.j === 1 : o.j === 0) && !pickedWords.includes(o.w));
+    if (alt) {
+      picks[idx] = alt;
+      current = picks.filter(p => p.j === 1).length;
+    } else {
+      break;
+    }
+    tries++;
+  }
+}
+
+function renderWords(words) {
+  const area = document.getElementById("wordsArea");
+  area.innerHTML = "";
+  words.forEach(w => {
+    const el = document.createElement("div");
+    el.className = "word-pill";
+    el.textContent = w;
+    el.addEventListener("click", () => {
+      el.classList.toggle("remembered");
+      updateLiveCount();
+      // a change to which words were remembered means any earlier save is stale
+      const btn = document.getElementById("saveScoreBtn");
+      if (btn.disabled) {
+        btn.disabled = false;
+        document.getElementById("scoreSavedNote").style.display = "none";
+      }
+    });
+    area.appendChild(el);
+  });
+}
+
+document.getElementById("genBtn").addEventListener("click", generateSet);
+
+function loadByCode(code) {
+  const { seed, count: cnt, level: lvl } = decodeCode(code);
+  count = cnt;
+  level = lvl;
+  document.querySelectorAll("#countSeg button").forEach(b => {
+    b.classList.toggle("active", parseInt(b.dataset.val) === cnt);
+  });
+  document.querySelectorAll("#levelSeg button").forEach(b => {
+    b.classList.toggle("active", b.dataset.val === lvl);
+  });
+  applyGeneratedSet(seed, cnt, lvl);
+}
+
+// ---- Recall-score tracking & history ----
+// Stored locally in this browser for now; when the app moves to Supabase
+// (per the account/sync plan), each saved entry maps 1:1 to a row in the
+// generated_sets table keyed by user_id.
+function getHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+  } catch (e) {
+    return [];
+  }
+}
+
+function setHistory(arr) {
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
+  } catch (e) {
+    // storage unavailable (private browsing, quota) — fail silently
+  }
+}
+
+function saveScore(rememberedWords) {
+  if (!currentSet) return;
+  const history = getHistory();
+  history.unshift({
+    code: currentSet.code,
+    words: currentSet.words,
+    count: currentSet.count,
+    level: currentSet.level,
+    remembered: rememberedWords.length,
+    rememberedWords: rememberedWords,
+    timestamp: Date.now()
+  });
+  setHistory(history);
+  renderHistory();
+}
+
+function deleteHistoryEntry(idx) {
+  const history = getHistory();
+  history.splice(idx, 1);
+  setHistory(history);
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = getHistory();
+  const list = document.getElementById("historyList");
+  list.innerHTML = "";
+  if (!history.length) {
+    list.innerHTML = '<div class="history-empty">עדיין אין תוצאות שמורות. לאחר שתבדקו כמה מילים זכרתם, לחצו "שמור תוצאה".</div>';
+    return;
+  }
+  history.forEach((entry, idx) => {
+    const pct = entry.count ? Math.round((entry.remembered / entry.count) * 100) : 0;
+    const isLow = pct < 60;
+    const date = new Date(entry.timestamp).toLocaleString("he-IL", {
+      day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit"
+    });
+    const el = document.createElement("div");
+    el.className = "history-item";
+    el.innerHTML = `
+      <div class="row1">
+        <span class="meta">${date} · ${LEVEL_LABELS[entry.level] || entry.level}</span>
+        <span class="score-badge${isLow ? " low" : ""}">${entry.remembered}/${entry.count} (${pct}%)</span>
+      </div>
+      <div class="hwords">${entry.words.map(w => {
+        const got = (entry.rememberedWords || []).includes(w);
+        return '<span class="hword' + (got ? ' got' : '') + '">' + w + '</span>';
+      }).join("")}</div>
+      <div class="row2">
+        <button class="del-btn" data-idx="${idx}">מחק</button>
+      </div>
+    `;
+    list.appendChild(el);
+  });
+
+  list.querySelectorAll(".del-btn").forEach(btn => {
+    btn.addEventListener("click", () => deleteHistoryEntry(parseInt(btn.dataset.idx, 10)));
+  });
+}
+
+const saveScoreBtn = document.getElementById("saveScoreBtn");
+saveScoreBtn.addEventListener("click", () => {
+  if (!currentSet || saveScoreBtn.disabled) return;
+  const rememberedWords = Array.from(document.querySelectorAll("#wordsArea .word-pill.remembered"))
+    .map(el => el.textContent);
+  saveScore(rememberedWords);
+  document.getElementById("scoreSavedNote").style.display = "block";
+  saveScoreBtn.disabled = true; // prevent duplicate saves of the same result
+});
+
+let clearArmed = false;
+let clearArmTimer = null;
+const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+clearHistoryBtn.addEventListener("click", () => {
+  if (!getHistory().length) return;
+  if (!clearArmed) {
+    clearArmed = true;
+    clearHistoryBtn.textContent = "לאשר מחיקת הכל?";
+    clearArmTimer = setTimeout(() => {
+      clearArmed = false;
+      clearHistoryBtn.textContent = "נקה היסטוריה";
+    }, 4000);
+  } else {
+    clearTimeout(clearArmTimer);
+    clearArmed = false;
+    clearHistoryBtn.textContent = "נקה היסטוריה";
+    setHistory([]);
+    renderHistory();
+  }
+});
+
+renderHistory();
+</script>
+</body>
+</html>
