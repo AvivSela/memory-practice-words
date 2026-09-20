@@ -434,6 +434,150 @@
   .history-item .del-btn:active {
     color: var(--danger);
   }
+  .tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .tab-btn {
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 14px;
+    padding: 12px 22px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 700;
+    min-height: 48px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .tab-btn.active {
+    border-color: transparent;
+    background: var(--accent);
+    color: #fff;
+  }
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .stepper-btn {
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 14px;
+    width: 52px;
+    height: 52px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stepper-btn:active { background: var(--accent-soft); }
+  .stepper-value {
+    min-width: 40px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+  .print-preview-area {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .print-only-header {
+    display: none;
+  }
+  .print-actions {
+    display: flex;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .print-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 56px;
+  }
+  .print-set-row {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-soft);
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .print-set-row:last-child { border-bottom: none; }
+  .print-set-header {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .print-set-header .set-num {
+    color: var(--ink);
+  }
+  .print-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+  .print-word {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .print-word .chk {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--muted);
+    border-radius: 3px;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  @media print {
+    body {
+      padding: 0;
+      background: #fff;
+      color: #000;
+      display: block;
+    }
+    .wrap { max-width: 100%; }
+    .icon-badge, h1, .sub, .tabs,
+    #practiceScreen,
+    .print-config, .generate-btn, .print-actions,
+    #printPlaceholder {
+      display: none !important;
+    }
+    .print-only-header {
+      display: block !important;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: #000;
+    }
+    .print-preview-area {
+      max-height: none !important;
+      overflow: visible !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      background: #fff !important;
+    }
+    .print-set-header { color: #000; }
+    .print-word { color: #000; }
+    .print-word .chk { border-color: #000; }
+  }
 </style>
 </head>
 <body>
@@ -444,6 +588,12 @@
   <h1>מחולל סטים למשחק "חמש מילים"</h1>
   <p class="sub">בוחר סט מילים מאוזן: קונקרטיות, ללא קשר סמנטי, גיוון פונטי ואיזון קושי</p>
 
+  <div class="tabs" id="mainTabs" role="tablist">
+    <button class="tab-btn active" data-screen="practice" role="tab" aria-selected="true">תרגול</button>
+    <button class="tab-btn" data-screen="print" role="tab" aria-selected="false">הדפסה</button>
+  </div>
+
+  <div id="practiceScreen">
   <div class="controls">
     <div class="control-group">
       <span class="control-label">כמה מילים</span>
@@ -507,6 +657,54 @@
   </div>
 
   <div class="foot">אפשר ליצור כמה סטים ולשמור את המועדפים לפני המפגש</div>
+  </div><!-- /practiceScreen -->
+
+  <div id="printScreen" style="display:none;">
+    <div class="print-only-header" id="printOnlyHeader"></div>
+
+    <div class="controls print-config">
+      <div class="control-group">
+        <span class="control-label">כמה מילים בסט</span>
+        <div class="seg" id="printCountSeg">
+          <button data-val="5" class="active" aria-pressed="true">5</button>
+          <button data-val="6" aria-pressed="false">6</button>
+          <button data-val="7" aria-pressed="false">7</button>
+          <button data-val="8" aria-pressed="false">8</button>
+        </div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">רמת קושי</span>
+        <div class="seg" id="printLevelSeg">
+          <button data-val="easy" class="active" aria-pressed="true">קל</button>
+          <button data-val="medium" aria-pressed="false">בינוני</button>
+          <button data-val="hard" aria-pressed="false">מאתגר</button>
+          <button data-val="mixed" aria-pressed="false">מעורב</button>
+        </div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">כמות סטים</span>
+        <div class="stepper" id="printAmountStepper">
+          <button type="button" class="stepper-btn" id="printAmountMinus" aria-label="פחות">−</button>
+          <span class="stepper-value" id="printAmountValue">10</span>
+          <button type="button" class="stepper-btn" id="printAmountPlus" aria-label="יותר">+</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="printGenBtn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.36-6.36L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.36 6.36L3 16"/><path d="M3 21v-5h5"/></svg>
+      <span>צור סטים להדפסה</span>
+    </button>
+
+    <div class="card print-actions" id="printActions" style="display:none;">
+      <button class="print-btn" id="printBtn">הדפס</button>
+    </div>
+
+    <div class="card print-preview-area" id="printPreviewArea">
+      <div class="placeholder" id="printPlaceholder">בחרו הגדרות ולחצו "צור סטים להדפסה"</div>
+      <div id="printSetsList"></div>
+    </div>
+  </div><!-- /printScreen -->
 </div>
 
 <script>
@@ -836,6 +1034,89 @@ clearHistoryBtn.addEventListener("click", () => {
 });
 
 renderHistory();
+
+// ---- Tabs ----
+document.getElementById("mainTabs").addEventListener("click", (e) => {
+  const btn = e.target.closest(".tab-btn");
+  if (!btn) return;
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.classList.remove("active");
+    b.setAttribute("aria-selected", "false");
+  });
+  btn.classList.add("active");
+  btn.setAttribute("aria-selected", "true");
+  const screen = btn.dataset.screen;
+  document.getElementById("practiceScreen").style.display = screen === "practice" ? "" : "none";
+  document.getElementById("printScreen").style.display = screen === "print" ? "" : "none";
+});
+
+// ---- Print screen ----
+let printCount = 5;
+let printLevel = "easy";
+let printAmount = 10;
+const PRINT_AMOUNT_MIN = 1;
+const PRINT_AMOUNT_MAX = 30;
+const LEVEL_KEYS = ["easy", "medium", "hard"];
+
+document.getElementById("printCountSeg").addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
+  printCount = parseInt(e.target.dataset.val);
+  setActive("printCountSeg", e.target);
+});
+document.getElementById("printLevelSeg").addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
+  printLevel = e.target.dataset.val;
+  setActive("printLevelSeg", e.target);
+});
+
+const printAmountValueEl = document.getElementById("printAmountValue");
+document.getElementById("printAmountMinus").addEventListener("click", () => {
+  printAmount = Math.max(PRINT_AMOUNT_MIN, printAmount - 1);
+  printAmountValueEl.textContent = printAmount;
+});
+document.getElementById("printAmountPlus").addEventListener("click", () => {
+  printAmount = Math.min(PRINT_AMOUNT_MAX, printAmount + 1);
+  printAmountValueEl.textContent = printAmount;
+});
+
+// Builds `printAmount` independent sets (each its own random seed) and
+// renders them as a compact, checkbox-per-word list ready for printing.
+function generatePrintBatch() {
+  const list = document.getElementById("printSetsList");
+  const placeholder = document.getElementById("printPlaceholder");
+  list.innerHTML = "";
+
+  const sets = [];
+  for (let i = 0; i < printAmount; i++) {
+    const lvl = printLevel === "mixed"
+      ? LEVEL_KEYS[Math.floor(Math.random() * LEVEL_KEYS.length)]
+      : printLevel;
+    const seed = Math.floor(Math.random() * 1e9);
+    sets.push({ words: buildSet(seed, printCount, lvl), level: lvl });
+  }
+
+  sets.forEach((s, idx) => {
+    const row = document.createElement("div");
+    row.className = "print-set-row";
+    row.innerHTML =
+      '<div class="print-set-header"><span class="set-num">סט ' + (idx + 1) + '</span> · ' +
+      (LEVEL_LABELS[s.level] || s.level) + '</div>' +
+      '<div class="print-words">' +
+      s.words.map(w => '<span class="print-word"><span class="chk"></span>' + w + '</span>').join("") +
+      '</div>';
+    list.appendChild(row);
+  });
+
+  placeholder.style.display = "none";
+  document.getElementById("printActions").style.display = "flex";
+
+  const dateStr = new Date().toLocaleDateString("he-IL");
+  document.getElementById("printOnlyHeader").textContent =
+    "מחולל סטים – משחק חמש מילים · " + printAmount + " סטים · " + dateStr;
+}
+
+document.getElementById("printGenBtn").addEventListener("click", generatePrintBatch);
+document.getElementById("printBtn").addEventListener("click", () => window.print());
 </script>
 </body>
 </html>
