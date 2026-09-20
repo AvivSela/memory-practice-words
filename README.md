@@ -41,7 +41,7 @@ A single-page, static Hebrew (RTL) web app that generates word sets for "חמש 
 ## What it does
 
 - **Practice screen** — generates one word set at a time, lets you click the words you remembered, and tracks a scoring history persisted to `localStorage` in the browser.
-- **Print screen** — generates a batch of N sets at once, styled for printing.
+- **Worksheets screen** (דפי תרגול) — generates a batch of N sets at once, styled for printing.
 
 Word sets are generated deterministically from an integer seed via a seeded pseudo-random number generator, so the same `(seed, count, level)` always reproduces the exact same words — this is what makes a set reproducible and shareable via a single number.
 

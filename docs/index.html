@@ -4,16 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מחולל סטים - משחק חמש מילים</title>
-<meta name="description" content="מחולל סטים למשחק הזיכרון 'חמש מילים': בונה סטים מאוזנים של מילים בעברית - קונקרטיות, ללא קשר סמנטי, גיוון פונטי ואיזון קושי - לתרגול והדפסה.">
+<meta name="description" content="מחולל סטים למשחק הזיכרון 'חמש מילים', המבוסס על מבחן חמש המילים הקליני של פרופ' ברונו דובואה (2002) לאבחון מוקדם של אלצהיימר. סטים מאוזנים בעברית - קטגוריות סמנטיות, קונקרטיות וגיוון פונטי - לתרגול זיכרון אפיזודי מילולי, שחזור לפי seed והדפסה.">
+<meta name="keywords" content="חמש מילים, מבחן חמש המילים, זיכרון אפיזודי, אימון זיכרון, אלצהיימר, ברונו דובואה, תרגול קוגניטיבי, משחק זיכרון בעברית">
 <link rel="canonical" href="https://avivsela.github.io/memory-practice-words/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="he_IL">
 <meta property="og:title" content="מחולל סטים - משחק חמש מילים">
-<meta property="og:description" content="מחולל סטים למשחק הזיכרון 'חמש מילים': בונה סטים מאוזנים של מילים בעברית לתרגול והדפסה.">
+<meta property="og:description" content="מחולל סטים למשחק הזיכרון 'חמש מילים', מבוסס על מבחן קליני לאבחון מוקדם של אלצהיימר. סטים מאוזנים בעברית לתרגול זיכרון אפיזודי, שחזור לפי seed והדפסה.">
 <meta property="og:url" content="https://avivsela.github.io/memory-practice-words/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="מחולל סטים - משחק חמש מילים">
-<meta name="twitter:description" content="מחולל סטים למשחק הזיכרון 'חמש מילים': בונה סטים מאוזנים של מילים בעברית לתרגול והדפסה.">
+<meta name="twitter:description" content="מחולל סטים למשחק הזיכרון 'חמש מילים', מבוסס על מבחן קליני לאבחון מוקדם של אלצהיימר. סטים מאוזנים בעברית לתרגול זיכרון אפיזודי, שחזור לפי seed והדפסה.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -532,11 +533,11 @@
     font-size: 1.3rem;
     font-weight: 800;
   }
-  .print-preview-area {
+  .worksheets-preview-area {
     max-height: 60vh;
     overflow-y: auto;
   }
-  .print-preview-header {
+  .worksheets-preview-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -559,21 +560,21 @@
     display: inline-flex;
     align-items: center;
   }
-  #printModeSeg {
+  #worksheetsModeSeg {
     flex-wrap: wrap;
   }
-  #printModeSeg button {
+  #worksheetsModeSeg button {
     flex: 1 1 auto !important;
   }
-  .print-only-header {
+  .worksheets-only-header {
     display: none;
   }
-  .print-actions {
+  .worksheets-actions {
     display: flex;
     padding: 14px;
     margin-bottom: 14px;
   }
-  .print-btn {
+  .worksheets-btn {
     width: 100%;
     padding: 16px;
     border: none;
@@ -585,28 +586,28 @@
     cursor: pointer;
     min-height: 56px;
   }
-  .print-set-row {
+  .worksheets-set-row {
     padding: 10px 0;
     border-bottom: 1px solid var(--border-soft);
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .print-set-row:last-child { border-bottom: none; }
-  .print-set-header {
+  .worksheets-set-row:last-child { border-bottom: none; }
+  .worksheets-set-header {
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--muted);
     margin-bottom: 6px;
   }
-  .print-set-header .set-num {
+  .worksheets-set-header .set-num {
     color: var(--ink);
   }
-  .print-words {
+  .worksheets-words {
     display: flex;
     flex-wrap: wrap;
     gap: 6px 18px;
   }
-  .print-word {
+  .worksheets-word {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -614,7 +615,7 @@
     font-weight: 600;
     color: var(--ink);
   }
-  .print-word .chk {
+  .worksheets-word .chk {
     width: 14px;
     height: 14px;
     border: 1.5px solid var(--muted);
@@ -622,22 +623,22 @@
     display: inline-block;
     flex-shrink: 0;
   }
-  .print-preview-area.elder-mode .print-set-row {
+  .worksheets-preview-area.elder-mode .worksheets-set-row {
     padding: 18px 0;
   }
-  .print-preview-area.elder-mode .print-set-header {
+  .worksheets-preview-area.elder-mode .worksheets-set-header {
     font-size: 1.2rem;
     font-weight: 800;
   }
-  .print-preview-area.elder-mode .print-words {
+  .worksheets-preview-area.elder-mode .worksheets-words {
     gap: 14px 30px;
   }
-  .print-preview-area.elder-mode .print-word {
+  .worksheets-preview-area.elder-mode .worksheets-word {
     font-size: 1.55rem;
     font-weight: 700;
     gap: 10px;
   }
-  .print-preview-area.elder-mode .print-word .chk {
+  .worksheets-preview-area.elder-mode .worksheets-word .chk {
     width: 24px;
     height: 24px;
     border-width: 2.5px;
@@ -663,11 +664,11 @@
     .wrap { max-width: 100%; }
     .icon-badge, h1, .sub, .tabs,
     #practiceScreen, #aboutScreen,
-    .print-config, .print-actions,
-    .print-preview-header {
+    .worksheets-config, .worksheets-actions,
+    .worksheets-preview-header {
       display: none !important;
     }
-    .print-only-header {
+    .worksheets-only-header {
       display: block !important;
       text-align: center;
       font-weight: 800;
@@ -675,7 +676,7 @@
       margin-bottom: 16px;
       color: #000;
     }
-    .print-preview-area {
+    .worksheets-preview-area {
       max-height: none !important;
       overflow: visible !important;
       border: none !important;
@@ -683,9 +684,9 @@
       padding: 0 !important;
       background: #fff !important;
     }
-    .print-set-header { color: #000; }
-    .print-word { color: #000; }
-    .print-word .chk { border-color: #000; }
+    .worksheets-set-header { color: #000; }
+    .worksheets-word { color: #000; }
+    .worksheets-word .chk { border-color: #000; }
   }
 </style>
 </head>
@@ -699,7 +700,7 @@
 
   <div class="tabs" id="mainTabs" role="tablist">
     <button class="tab-btn active" data-screen="practice" role="tab" aria-selected="true">תרגול</button>
-    <button class="tab-btn" data-screen="print" role="tab" aria-selected="false">הדפסה</button>
+    <button class="tab-btn" data-screen="worksheets" role="tab" aria-selected="false">דפי תרגול</button>
     <button class="tab-btn" data-screen="about" role="tab" aria-selected="false">אודות</button>
   </div>
 
@@ -769,13 +770,13 @@
   <div class="foot">אפשר ליצור כמה סטים ולשמור את המועדפים לפני המפגש</div>
   </div><!-- /practiceScreen -->
 
-  <div id="printScreen" style="display:none;">
-    <div class="print-only-header" id="printOnlyHeader"></div>
+  <div id="worksheetsScreen" style="display:none;">
+    <div class="worksheets-only-header" id="worksheetsOnlyHeader"></div>
 
-    <div class="controls print-config">
+    <div class="controls worksheets-config">
       <div class="control-group">
         <span class="control-label">כמה מילים בסט</span>
-        <div class="seg" id="printCountSeg">
+        <div class="seg" id="worksheetsCountSeg">
           <button data-val="5" class="active" aria-pressed="true">5</button>
           <button data-val="6" aria-pressed="false">6</button>
           <button data-val="7" aria-pressed="false">7</button>
@@ -784,7 +785,7 @@
       </div>
       <div class="control-group">
         <span class="control-label">רמת קושי</span>
-        <div class="seg" id="printLevelSeg">
+        <div class="seg" id="worksheetsLevelSeg">
           <button data-val="easy" class="active" aria-pressed="true">קל</button>
           <button data-val="medium" aria-pressed="false">בינוני</button>
           <button data-val="hard" aria-pressed="false">מאתגר</button>
@@ -793,33 +794,33 @@
       </div>
       <div class="control-group">
         <span class="control-label">תצוגה</span>
-        <div class="seg" id="printModeSeg">
+        <div class="seg" id="worksheetsModeSeg">
           <button data-val="normal" class="active" aria-pressed="true">רגילה</button>
           <button data-val="elder" aria-pressed="false">לגיל שלישי</button>
         </div>
       </div>
       <div class="control-group">
         <span class="control-label">כמות סטים</span>
-        <div class="stepper" id="printAmountStepper">
-          <button type="button" class="stepper-btn" id="printAmountMinus" aria-label="פחות">−</button>
-          <span class="stepper-value" id="printAmountValue">10</span>
-          <button type="button" class="stepper-btn" id="printAmountPlus" aria-label="יותר">+</button>
+        <div class="stepper" id="worksheetsAmountStepper">
+          <button type="button" class="stepper-btn" id="worksheetsAmountMinus" aria-label="פחות">−</button>
+          <span class="stepper-value" id="worksheetsAmountValue">10</span>
+          <button type="button" class="stepper-btn" id="worksheetsAmountPlus" aria-label="יותר">+</button>
         </div>
       </div>
     </div>
 
-    <div class="card print-preview-area" id="printPreviewArea">
-      <div class="print-preview-header">
-        <span id="printPreviewCount">10 סטים</span>
+    <div class="card worksheets-preview-area" id="worksheetsPreviewArea">
+      <div class="worksheets-preview-header">
+        <span id="worksheetsPreviewCount">10 סטים</span>
         <button type="button" class="reroll-btn" id="rerollBtn">🔀 ערבב מחדש</button>
       </div>
-      <div id="printSetsList" aria-live="polite"></div>
+      <div id="worksheetsSetsList" aria-live="polite"></div>
     </div>
 
-    <div class="card print-actions" id="printActions">
-      <button class="print-btn" id="printBtn">הדפס</button>
+    <div class="card worksheets-actions" id="worksheetsActions">
+      <button class="worksheets-btn" id="worksheetsBtn">הדפס</button>
     </div>
-  </div><!-- /printScreen -->
+  </div><!-- /worksheetsScreen -->
 
   <div id="aboutScreen" style="display:none;">
     <div class="card about-content">
@@ -1196,7 +1197,7 @@ function switchTab(screen) {
   btn.classList.add("active");
   btn.setAttribute("aria-selected", "true");
   document.getElementById("practiceScreen").style.display = screen === "practice" ? "" : "none";
-  document.getElementById("printScreen").style.display = screen === "print" ? "" : "none";
+  document.getElementById("worksheetsScreen").style.display = screen === "worksheets" ? "" : "none";
   document.getElementById("aboutScreen").style.display = screen === "about" ? "" : "none";
 }
 
@@ -1206,22 +1207,22 @@ document.getElementById("mainTabs").addEventListener("click", (e) => {
   switchTab(btn.dataset.screen);
 });
 
-// Deep-link into a tab via ?tab=print (or #print) so a shared link can
-// open straight on the printing screen instead of the default practice one.
+// Deep-link into a tab via ?tab=worksheets (or #worksheets) so a shared link
+// can open straight on the worksheets screen instead of the default practice one.
 (function initTabFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const requested = params.get("tab") || window.location.hash.replace("#", "");
-  if (requested === "print" || requested === "practice" || requested === "about") {
+  if (requested === "worksheets" || requested === "practice" || requested === "about") {
     switchTab(requested);
   }
 })();
 
-// ---- Print screen ----
-let printCount = 5;
-let printLevel = "easy";
-let printAmount = 10;
-const PRINT_AMOUNT_MIN = 1;
-const PRINT_AMOUNT_MAX = 30;
+// ---- Worksheets screen ----
+let worksheetsCount = 5;
+let worksheetsLevel = "easy";
+let worksheetsAmount = 10;
+const WORKSHEETS_AMOUNT_MIN = 1;
+const WORKSHEETS_AMOUNT_MAX = 30;
 const LEVEL_KEYS = ["easy", "medium", "hard"];
 
 // Count, difficulty and amount define *what* should be on the page, so
@@ -1229,81 +1230,81 @@ const LEVEL_KEYS = ["easy", "medium", "hard"];
 // "generate" step, since the result is a direct, expected consequence of
 // the setting. Only the elder-mode toggle (a style, not content) and the
 // reroll link (new random words with the *same* settings) skip this.
-document.getElementById("printCountSeg").addEventListener("click", e => {
+document.getElementById("worksheetsCountSeg").addEventListener("click", e => {
   if (e.target.tagName !== "BUTTON") return;
-  printCount = parseInt(e.target.dataset.val);
-  setActive("printCountSeg", e.target);
-  generatePrintBatch();
+  worksheetsCount = parseInt(e.target.dataset.val);
+  setActive("worksheetsCountSeg", e.target);
+  generateWorksheetsBatch();
 });
-document.getElementById("printLevelSeg").addEventListener("click", e => {
+document.getElementById("worksheetsLevelSeg").addEventListener("click", e => {
   if (e.target.tagName !== "BUTTON") return;
-  printLevel = e.target.dataset.val;
-  setActive("printLevelSeg", e.target);
-  generatePrintBatch();
+  worksheetsLevel = e.target.dataset.val;
+  setActive("worksheetsLevelSeg", e.target);
+  generateWorksheetsBatch();
 });
-document.getElementById("printModeSeg").addEventListener("click", e => {
+document.getElementById("worksheetsModeSeg").addEventListener("click", e => {
   if (e.target.tagName !== "BUTTON") return;
-  setActive("printModeSeg", e.target);
-  document.getElementById("printPreviewArea").classList.toggle("elder-mode", e.target.dataset.val === "elder");
+  setActive("worksheetsModeSeg", e.target);
+  document.getElementById("worksheetsPreviewArea").classList.toggle("elder-mode", e.target.dataset.val === "elder");
 });
 
-const printAmountValueEl = document.getElementById("printAmountValue");
-document.getElementById("printAmountMinus").addEventListener("click", () => {
-  printAmount = Math.max(PRINT_AMOUNT_MIN, printAmount - 1);
-  printAmountValueEl.textContent = printAmount;
-  generatePrintBatch();
+const worksheetsAmountValueEl = document.getElementById("worksheetsAmountValue");
+document.getElementById("worksheetsAmountMinus").addEventListener("click", () => {
+  worksheetsAmount = Math.max(WORKSHEETS_AMOUNT_MIN, worksheetsAmount - 1);
+  worksheetsAmountValueEl.textContent = worksheetsAmount;
+  generateWorksheetsBatch();
 });
-document.getElementById("printAmountPlus").addEventListener("click", () => {
-  printAmount = Math.min(PRINT_AMOUNT_MAX, printAmount + 1);
-  printAmountValueEl.textContent = printAmount;
-  generatePrintBatch();
+document.getElementById("worksheetsAmountPlus").addEventListener("click", () => {
+  worksheetsAmount = Math.min(WORKSHEETS_AMOUNT_MAX, worksheetsAmount + 1);
+  worksheetsAmountValueEl.textContent = worksheetsAmount;
+  generateWorksheetsBatch();
 });
 
 // Reroll: same settings, new random words — this is the one case that
 // genuinely needs its own explicit control, since nothing else signals
 // "I want different words" on its own.
-document.getElementById("rerollBtn").addEventListener("click", generatePrintBatch);
+document.getElementById("rerollBtn").addEventListener("click", generateWorksheetsBatch);
 
-// Builds `printAmount` independent sets (each its own random seed) and
+// Builds `worksheetsAmount` independent sets (each its own random seed) and
 // renders them as a compact, checkbox-per-word list ready for printing.
-function generatePrintBatch() {
-  const list = document.getElementById("printSetsList");
+function generateWorksheetsBatch() {
+  const list = document.getElementById("worksheetsSetsList");
   list.innerHTML = "";
 
   const sets = [];
-  for (let i = 0; i < printAmount; i++) {
-    const lvl = printLevel === "mixed"
+  for (let i = 0; i < worksheetsAmount; i++) {
+    const lvl = worksheetsLevel === "mixed"
       ? LEVEL_KEYS[Math.floor(Math.random() * LEVEL_KEYS.length)]
-      : printLevel;
+      : worksheetsLevel;
     const seed = Math.floor(Math.random() * 1e9);
-    sets.push({ words: buildSet(seed, printCount, lvl), level: lvl });
+    sets.push({ words: buildSet(seed, worksheetsCount, lvl), level: lvl });
   }
 
   sets.forEach((s, idx) => {
     const row = document.createElement("div");
-    row.className = "print-set-row";
+    row.className = "worksheets-set-row";
     row.innerHTML =
-      '<div class="print-set-header"><span class="set-num">סט ' + (idx + 1) + '</span> · ' +
+      '<div class="worksheets-set-header"><span class="set-num">סט ' + (idx + 1) + '</span> · ' +
       (LEVEL_LABELS[s.level] || s.level) + '</div>' +
-      '<div class="print-words">' +
-      s.words.map(w => '<span class="print-word"><span class="chk"></span>' + w + '</span>').join("") +
+      '<div class="worksheets-words">' +
+      s.words.map(w => '<span class="worksheets-word"><span class="chk"></span>' + w + '</span>').join("") +
       '</div>';
     list.appendChild(row);
   });
 
-  document.getElementById("printPreviewCount").textContent = printAmount + " סטים";
+  document.getElementById("worksheetsPreviewCount").textContent = worksheetsAmount + " סטים";
 
   const dateStr = new Date().toLocaleDateString("he-IL");
-  document.getElementById("printOnlyHeader").textContent =
-    "מחולל סטים – משחק חמש מילים · " + printAmount + " סטים · " + dateStr;
+  document.getElementById("worksheetsOnlyHeader").textContent =
+    "מחולל סטים – משחק חמש מילים · " + worksheetsAmount + " סטים · " + dateStr;
 }
 
 // The preview reflects current settings at all times — no manual
 // "generate" step, so it's built once right away rather than left empty
 // until a first click.
-generatePrintBatch();
+generateWorksheetsBatch();
 
-document.getElementById("printBtn").addEventListener("click", () => {
+document.getElementById("worksheetsBtn").addEventListener("click", () => {
   if (document.readyState === "complete") {
     window.print();
   } else {

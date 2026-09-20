@@ -15,7 +15,7 @@ There is no build or test tooling. To develop, open `docs/index.html` directly i
 - **`docs/words.js`** — defines the word bank (`bank`), a plain object keyed by semantic category (animals, objects, nature, places, food, people_life, household, misc). Each word is `{w: "<hebrew word>", j: 0|1}`, where `j:1` marks a "juicy" (vivid/concrete/imageable) word and `j:0` a neutral one. Add/edit/remove words only in this file. Before adding words, read `WORD_SELECTION_GUIDE.md`, which documents the clinical/psycholinguistic rationale (concreteness, frequency, word length, semantic clustering, phonological/visual letter similarity, unpointed-Hebrew ambiguity, etc.) behind what makes a word a good or bad fit, and gives a concrete checklist to apply per candidate.
 - **`docs/index.html`** — everything else: styles, markup, and all app logic in one inline `<script>` at the bottom. It has two tabs/screens toggled via `switchTab()`:
   - **Practice screen** — generate one set at a time, click words you remembered, track score, and persist a scoring history to `localStorage` (key `fiveWordsHistory`).
-  - **Print screen** — generate a batch of N sets at once for printing (via `window.print()`), with dedicated CSS under `@media print`.
+  - **Worksheets screen** (דפי תרגול) — generate a batch of N sets at once for printing (via `window.print()`), with dedicated CSS under `@media print`.
 
 ### Set generation algorithm (`buildSet` in docs/index.html)
 
