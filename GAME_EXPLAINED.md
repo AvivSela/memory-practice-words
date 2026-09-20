@@ -109,3 +109,23 @@
 ## 5. למה זה חשוב
 
 המילים במשחק לא נבחרות "כי הן נשמעות טוב" — כל בחירה משרתת עיקרון ספציפי שמקורו במחקר הקוגניטיבי או בכלי הקליני שהמשחק מבוסס עליו. זה מה שהופך סט אקראי לכלי תרגול הוגן: הקושי בזכירת מילה אמור לשקף את הזיכרון עצמו, לא היכרות מקרית עם המילה, בלבול פונטי, או עמימות בכתיב.
+
+## 6. מקורות ומחקרים
+
+הרשימה המלאה, כולל הפניה מדויקת לכל עיקרון, נמצאת ב-`WORD_SELECTION_GUIDE.md`. אלה המקורות המרכזיים:
+
+- Dubois, B. et al. (2002). "The 5 words": a simple and sensitive test for the diagnosis of Alzheimer's disease — המבחן הקליני שעליו מבוסס המשחק. [PubMed](https://pubmed.ncbi.nlm.nih.gov/12467149/)
+- Mormont, E., Jamart, J., & Robaye, L. (2012). Validity of the Five-Word Test for the Evaluation of Verbal Episodic Memory and Dementia in a Memory Clinic Setting. [SAGE Journals](https://journals.sagepub.com/doi/abs/10.1177/0891988712445088)
+- Cerbone, B. et al. Translation, Adaptation and Validation of the Five-Word Test (Test Delle 5 Parole) in an Italian Sample. [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9032514/)
+- Paivio, A. — Dual Coding Theory ואפקט הקונקרטיות (concreteness effect). [Picture superiority effect (Wikipedia)](https://en.wikipedia.org/wiki/Picture_superiority_effect), [Dual coding theory and education (Clark & Paivio)](https://nschwartz.yourweb.csuchico.edu/Clark%20&%20Paivio.pdf)
+- Concrete vs Abstract Words — What do you Recall Better? A Study on Dual Coding Theory. [PeerJ Preprint](https://peerj.com/preprints/2719.pdf)
+- Conrad, R., & Hull, A. J. (1964) ומחקרי המשך על אפקט הדמיון הפונולוגי (phonological similarity effect) בזכירה סדרתית. [Wiley/BJP](https://bpspsychub.onlinelibrary.wiley.com/doi/full/10.1111/bjop.12575), [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9796538/)
+- Bousfield, W. A. (1953). The occurrence of clustering in the recall of randomly arranged associates — קיבוץ סמנטי בזכירה חופשית. [ResearchGate](https://www.researchgate.net/publication/232510027_Clustering_and_organization_in_free_recall), [Taylor & Francis](https://www.tandfonline.com/doi/full/10.1080/09658211.2012.683010)
+- אפקט שכיחות המילה (word frequency effect) בזכירה חופשית. [Wikipedia](https://en.wikipedia.org/wiki/Word_frequency_effect), [Computational Memory Lab](https://memory.psych.upenn.edu/files/pubs/LohnKaha12.pdf)
+- Baddeley, A., Thomson, N., & Buchanan, M. — אפקט אורך המילה (word length effect) בזיכרון עבודה. [ScienceDirect](https://www.sciencedirect.com/topics/psychology/word-length-effect), [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4196586/)
+- אפקטים של גיל רכישה (age of acquisition) על זיכרון. [Springer](https://link.springer.com/article/10.3758/s13421-021-01137-6)
+- אפקט המיקום הסדרתי (serial position), primacy/recency, ואפקט אורך הרשימה. [SimplyPsychology](https://www.simplypsychology.org/primacy-recency.html), [PubMed](https://pubmed.ncbi.nlm.nih.gov/12450092/)
+- השפעת ולנס ועוררות רגשית על זכירת מילים. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0001691824001264), [PNAS](https://www.pnas.org/doi/10.1073/pnas.0306408101)
+- כתיב חסר (ktiv haser) — עמימות מובנית בכתיב עברי חסר-ניקוד (הומוגרפים כמו שער/שֵׂער, מלון/מָלוֹן, זר/זֵר). [Wikipedia: Ktiv hasar niqqud](https://en.wikipedia.org/wiki/Ktiv_hasar_niqqud), [Wikipedia: Niqqud](https://en.wikipedia.org/wiki/Niqqud)
+- Von Restorff, H. (1933) ומחקרי המשך על אפקט הבידוד/הבולטות בזיכרון. [Wikipedia](https://en.wikipedia.org/wiki/Von_Restorff_effect), [Springer](https://link.springer.com/article/10.3758/s13421-016-0651-6)
+- מהימנות טפסים מקבילים (parallel forms reliability) ואיזון מאגר פריטים בבניית מבחנים פסיכומטריים. [Sage Research Methods](https://methods.sagepub.com/ency/edvol/encyc-of-research-design/chpt/parallel-forms-reliability), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5982169/)
