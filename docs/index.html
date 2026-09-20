@@ -268,6 +268,17 @@
   .accordion-toggle.open .chevron {
     transform: rotate(180deg);
   }
+  .accordion-toggle.open {
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .accordion-toggle.open + .card {
+    margin-top: 0;
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
   ul.rules {
     font-size: 1rem;
     color: var(--muted);
