@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מחולל סטים - משחק חמש מילים</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap">
 <style>
   :root {
@@ -487,6 +488,35 @@
     max-height: 60vh;
     overflow-y: auto;
   }
+  .print-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-soft);
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .reroll-btn {
+    border: none;
+    background: none;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 6px 8px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  #printModeSeg {
+    flex-wrap: wrap;
+  }
+  #printModeSeg button {
+    flex: 1 1 auto !important;
+  }
   .print-only-header {
     display: none;
   }
@@ -544,18 +574,49 @@
     display: inline-block;
     flex-shrink: 0;
   }
+  .print-preview-area.elder-mode .print-set-row {
+    padding: 18px 0;
+  }
+  .print-preview-area.elder-mode .print-set-header {
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+  .print-preview-area.elder-mode .print-words {
+    gap: 14px 30px;
+  }
+  .print-preview-area.elder-mode .print-word {
+    font-size: 1.55rem;
+    font-weight: 700;
+    gap: 10px;
+  }
+  .print-preview-area.elder-mode .print-word .chk {
+    width: 24px;
+    height: 24px;
+    border-width: 2.5px;
+    border-radius: 5px;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 15mm 20mm;
+  }
   @media print {
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
     body {
       padding: 0;
       background: #fff;
       color: #000;
       display: block;
+      direction: rtl;
+      text-align: right;
     }
     .wrap { max-width: 100%; }
     .icon-badge, h1, .sub, .tabs,
     #practiceScreen,
-    .print-config, .generate-btn, .print-actions,
-    #printPlaceholder {
+    .print-config, .print-actions,
+    .print-preview-header {
       display: none !important;
     }
     .print-only-header {
@@ -682,6 +743,13 @@
         </div>
       </div>
       <div class="control-group">
+        <span class="control-label">תצוגה</span>
+        <div class="seg" id="printModeSeg">
+          <button data-val="normal" class="active" aria-pressed="true">רגילה</button>
+          <button data-val="elder" aria-pressed="false">לגיל שלישי</button>
+        </div>
+      </div>
+      <div class="control-group">
         <span class="control-label">כמות סטים</span>
         <div class="stepper" id="printAmountStepper">
           <button type="button" class="stepper-btn" id="printAmountMinus" aria-label="פחות">−</button>
@@ -691,18 +759,16 @@
       </div>
     </div>
 
-    <button class="generate-btn" id="printGenBtn">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.36-6.36L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.36 6.36L3 16"/><path d="M3 21v-5h5"/></svg>
-      <span>צור סטים להדפסה</span>
-    </button>
-
-    <div class="card print-actions" id="printActions" style="display:none;">
-      <button class="print-btn" id="printBtn">הדפס</button>
+    <div class="card print-preview-area" id="printPreviewArea">
+      <div class="print-preview-header">
+        <span id="printPreviewCount">10 סטים</span>
+        <button type="button" class="reroll-btn" id="rerollBtn">🔀 ערבב מחדש</button>
+      </div>
+      <div id="printSetsList" aria-live="polite"></div>
     </div>
 
-    <div class="card print-preview-area" id="printPreviewArea">
-      <div class="placeholder" id="printPlaceholder">בחרו הגדרות ולחצו "צור סטים להדפסה"</div>
-      <div id="printSetsList"></div>
+    <div class="card print-actions" id="printActions">
+      <button class="print-btn" id="printBtn">הדפס</button>
     </div>
   </div><!-- /printScreen -->
 </div>
@@ -1058,32 +1124,50 @@ const PRINT_AMOUNT_MIN = 1;
 const PRINT_AMOUNT_MAX = 30;
 const LEVEL_KEYS = ["easy", "medium", "hard"];
 
+// Count, difficulty and amount define *what* should be on the page, so
+// changing any of them regenerates the preview immediately — no separate
+// "generate" step, since the result is a direct, expected consequence of
+// the setting. Only the elder-mode toggle (a style, not content) and the
+// reroll link (new random words with the *same* settings) skip this.
 document.getElementById("printCountSeg").addEventListener("click", e => {
   if (e.target.tagName !== "BUTTON") return;
   printCount = parseInt(e.target.dataset.val);
   setActive("printCountSeg", e.target);
+  generatePrintBatch();
 });
 document.getElementById("printLevelSeg").addEventListener("click", e => {
   if (e.target.tagName !== "BUTTON") return;
   printLevel = e.target.dataset.val;
   setActive("printLevelSeg", e.target);
+  generatePrintBatch();
+});
+document.getElementById("printModeSeg").addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
+  setActive("printModeSeg", e.target);
+  document.getElementById("printPreviewArea").classList.toggle("elder-mode", e.target.dataset.val === "elder");
 });
 
 const printAmountValueEl = document.getElementById("printAmountValue");
 document.getElementById("printAmountMinus").addEventListener("click", () => {
   printAmount = Math.max(PRINT_AMOUNT_MIN, printAmount - 1);
   printAmountValueEl.textContent = printAmount;
+  generatePrintBatch();
 });
 document.getElementById("printAmountPlus").addEventListener("click", () => {
   printAmount = Math.min(PRINT_AMOUNT_MAX, printAmount + 1);
   printAmountValueEl.textContent = printAmount;
+  generatePrintBatch();
 });
+
+// Reroll: same settings, new random words — this is the one case that
+// genuinely needs its own explicit control, since nothing else signals
+// "I want different words" on its own.
+document.getElementById("rerollBtn").addEventListener("click", generatePrintBatch);
 
 // Builds `printAmount` independent sets (each its own random seed) and
 // renders them as a compact, checkbox-per-word list ready for printing.
 function generatePrintBatch() {
   const list = document.getElementById("printSetsList");
-  const placeholder = document.getElementById("printPlaceholder");
   list.innerHTML = "";
 
   const sets = [];
@@ -1107,16 +1191,25 @@ function generatePrintBatch() {
     list.appendChild(row);
   });
 
-  placeholder.style.display = "none";
-  document.getElementById("printActions").style.display = "flex";
+  document.getElementById("printPreviewCount").textContent = printAmount + " סטים";
 
   const dateStr = new Date().toLocaleDateString("he-IL");
   document.getElementById("printOnlyHeader").textContent =
     "מחולל סטים – משחק חמש מילים · " + printAmount + " סטים · " + dateStr;
 }
 
-document.getElementById("printGenBtn").addEventListener("click", generatePrintBatch);
-document.getElementById("printBtn").addEventListener("click", () => window.print());
+// The preview reflects current settings at all times — no manual
+// "generate" step, so it's built once right away rather than left empty
+// until a first click.
+generatePrintBatch();
+
+document.getElementById("printBtn").addEventListener("click", () => {
+  if (document.readyState === "complete") {
+    window.print();
+  } else {
+    window.addEventListener("load", () => window.print());
+  }
+});
 </script>
 </body>
 </html>
