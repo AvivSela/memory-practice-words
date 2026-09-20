@@ -1199,6 +1199,11 @@ function switchTab(screen) {
   document.getElementById("practiceScreen").style.display = screen === "practice" ? "" : "none";
   document.getElementById("worksheetsScreen").style.display = screen === "worksheets" ? "" : "none";
   document.getElementById("aboutScreen").style.display = screen === "about" ? "" : "none";
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("tab", screen);
+  url.hash = "";
+  history.replaceState(null, "", url);
 }
 
 document.getElementById("mainTabs").addEventListener("click", (e) => {
