@@ -275,6 +275,43 @@
     padding-inline-start: 20px;
     margin: 0;
   }
+  .about-content h2 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .about-content h2:not(:first-child) {
+    margin-top: 22px;
+  }
+  .about-content h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 16px 0 6px;
+  }
+  .about-content p {
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.7;
+    margin: 0 0 12px;
+  }
+  .about-content ul {
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.7;
+    padding-inline-start: 20px;
+    margin: 0 0 12px;
+  }
+  .about-content li {
+    margin-bottom: 6px;
+  }
+  .about-content a {
+    color: var(--accent);
+    font-weight: 700;
+  }
   .badge {
     display: inline-block;
     font-size: 0.75rem;
@@ -625,7 +662,7 @@
     }
     .wrap { max-width: 100%; }
     .icon-badge, h1, .sub, .tabs,
-    #practiceScreen,
+    #practiceScreen, #aboutScreen,
     .print-config, .print-actions,
     .print-preview-header {
       display: none !important;
@@ -663,6 +700,7 @@
   <div class="tabs" id="mainTabs" role="tablist">
     <button class="tab-btn active" data-screen="practice" role="tab" aria-selected="true">תרגול</button>
     <button class="tab-btn" data-screen="print" role="tab" aria-selected="false">הדפסה</button>
+    <button class="tab-btn" data-screen="about" role="tab" aria-selected="false">אודות</button>
   </div>
 
   <div id="practiceScreen">
@@ -782,6 +820,51 @@
       <button class="print-btn" id="printBtn">הדפס</button>
     </div>
   </div><!-- /printScreen -->
+
+  <div id="aboutScreen" style="display:none;">
+    <div class="card about-content">
+      <h2>מה זה המשחק?</h2>
+      <p>"חמש מילים" הוא כלי ליצירת סטים של מילים לתרגול <strong>זיכרון אפיזודי מילולי</strong> — היכולת לקודד מידע חדש ולשלוף אותו כעבור זמן. הוא מבוסס על <strong>מבחן חמש המילים</strong> (Test des cinq mots / Five Words Test), כלי סינון קליני שפותח ב-2002 על ידי פרופ' ברונו דובואה (Bruno Dubois) לאבחון מוקדם של מחלת אלצהיימר.</p>
+      <p>הרעיון המרכזי במבחן המקורי: כל מילה ברשימה משויכת לקטגוריה סמנטית משלה (למשל "כלב" תחת "בעל חיים"), כדי להבטיח קידוד עמוק בזמן הלמידה, ולאפשר לתת "רמז קטגורי" אם המילה לא נזכרת — כך אפשר להבחין בין כשל בקידוד לכשל בשליפה. המשחק לוקח את העיקרון הזה ומשתמש בו כדי לייצר סטים חדשים לתרגול, במקום רשימת מילים קבועה אחת.</p>
+
+      <h2>איך נבנה כל סט</h2>
+      <p>כל סט נוצר מ<strong>seed</strong> מספרי שמעביר דרך מחולל מספרים פסאודו-אקראיים. כך ש<strong>אותו seed, כמות מילים ורמת קושי תמיד ייצרו בדיוק את אותו הסט</strong> — ואפשר לשתף סט מילים רק על ידי שיתוף המספר. הבנייה עצמה מתבצעת בשלושה שלבים לפי הסדר הזה:</p>
+      <ul>
+        <li>בחירת מילה אחת מכל קטגוריה סמנטית (חיות, חפצים, טבע, מקומות, אוכל, אנשים/חיים, בית, שונות, כלי רכב, לבוש, מקצועות).</li>
+        <li>איזון "עסיסיות" — התאמת היחס בין מילים עסיסיות (מוחשיות/ציוריות) לניטרליות בהתאם לרמת הקושי.</li>
+        <li>תיקון אותיות פתיחה כפולות — הבטחה סופית שאין שתי מילים באותו הסט שמתחילות באותה אות.</li>
+      </ul>
+
+      <h2>למה המילים נבחרות ככה</h2>
+      <p>בחירת המילים ב-<code>words.js</code> מבוססת על עשרות שנות מחקר פסיכולינגוויסטי על מה הופך רשימת מילים לקלה או קשה לזכירה:</p>
+      <ul>
+        <li><strong>קונקרטיות ודימוי חזותי</strong> — מילים קונקרטיות (כלב, פרח) נזכרות טוב יותר ממופשטות, ומסומנות ברמת "עסיסיות" בהתאם (למשל "כריש" מול "דג").</li>
+        <li><strong>שכיחות וגיל רכישה</strong> — רק מילים יומיומיות ובסיסיות, כדי שקושי לזכור ינבע מהזיכרון ולא מאי-היכרות עם המילה.</li>
+        <li><strong>אורך המילה</strong> — מילים קצרות נזכרות טוב יותר; מילה ארוכה חריגה (כמו "איצטדיון") מפוצה בציון עסיסיות גבוה.</li>
+        <li><strong>ארגון סמנטי</strong> — מילה אחת בלבד מכל קטגוריה בכל סט, כדי למנוע "קיבוץ" שמטשטש את הבדיקה.</li>
+        <li><strong>דמיון פונולוגי</strong> — אין שתי מילים שמתחילות באותה אות באותו סט, כדי לא לתת רמז מקרי או לבלבל בשליפה.</li>
+        <li><strong>עוררות רגשית</strong> — עוצמה רגשית (כמו "חתונה") משפרת זכירה, אך שליליות קיצונית נשמרת במשורה כדי לא להסיח את הדעת.</li>
+        <li><strong>חד-משמעות</strong> — נמנעים ממילים דו-משמעיות שעלולות לבלבל בקידוד.</li>
+        <li><strong>עמימות ניקוד</strong> — ייחודי לעברית: מילים כמו "מלון" (מלון/מלון) שעלולות להשתמע לשתי קריאות בכתיב חסר-ניקוד לא נכללות במאגר.</li>
+        <li><strong>בולטות יחסית (אפקט פון רסטורף)</strong> — קטגוריות שונות מהותית זו מזו, לא רק פורמלית, כדי שכל מילה תבלוט ביחס לשכנותיה.</li>
+        <li><strong>דמיון חזותי בין אותיות עבריות</strong> — תשומת לב לזוגות אותיות דומות ויזואלית (ד/ר, ב/כ, ו/ז/נ, ה/ח/ת, ם/ס).</li>
+        <li><strong>איזון מאגר הקטגוריות</strong> — קטגוריות מאוזנות בגודלן וביחס העסיסיות שלהן, כדי שסטים מ-seeds שונים ברמת קושי זהה יהיו בקושי דומה.</li>
+      </ul>
+      <p>ההסבר המלא, כולל דוגמאות מהמאגר לכל עיקרון, נמצא ב-<a href="https://github.com/AvivSela/memory-practice-words/blob/main/GAME_EXPLAINED.md" target="_blank" rel="noopener">GAME_EXPLAINED.md</a>, והכללים המלאים להוספת מילים חדשות ב-<a href="https://github.com/AvivSela/memory-practice-words/blob/main/WORD_SELECTION_GUIDE.md" target="_blank" rel="noopener">WORD_SELECTION_GUIDE.md</a>.</p>
+
+      <h2>מקורות ומחקרים</h2>
+      <ul>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/12467149/" target="_blank" rel="noopener">Dubois, B. et al. (2002)</a> — מבחן חמש המילים המקורי לאבחון מוקדם של אלצהיימר.</li>
+        <li><a href="https://en.wikipedia.org/wiki/Picture_superiority_effect" target="_blank" rel="noopener">Paivio — Dual Coding Theory</a> ואפקט הקונקרטיות.</li>
+        <li><a href="https://www.researchgate.net/publication/232510027_Clustering_and_organization_in_free_recall" target="_blank" rel="noopener">Bousfield (1953)</a> — קיבוץ סמנטי בזכירה חופשית.</li>
+        <li><a href="https://bpspsychub.onlinelibrary.wiley.com/doi/full/10.1111/bjop.12575" target="_blank" rel="noopener">Conrad & Hull (1964)</a> — אפקט הדמיון הפונולוגי בזכירה סדרתית.</li>
+        <li><a href="https://www.sciencedirect.com/topics/psychology/word-length-effect" target="_blank" rel="noopener">Baddeley et al.</a> — אפקט אורך המילה בזיכרון עבודה.</li>
+        <li><a href="https://en.wikipedia.org/wiki/Von_Restorff_effect" target="_blank" rel="noopener">Von Restorff (1933)</a> — אפקט הבידוד/הבולטות בזיכרון.</li>
+        <li><a href="https://en.wikipedia.org/wiki/Ktiv_hasar_niqqud" target="_blank" rel="noopener">כתיב חסר (ktiv haser)</a> — עמימות מובנית בכתיב עברי חסר-ניקוד.</li>
+      </ul>
+      <p>הרשימה המלאה נמצאת בסוף <a href="https://github.com/AvivSela/memory-practice-words/blob/main/WORD_SELECTION_GUIDE.md" target="_blank" rel="noopener">WORD_SELECTION_GUIDE.md</a>.</p>
+    </div>
+  </div><!-- /aboutScreen -->
 </div>
 
 <script src="words.js"></script>
@@ -1114,6 +1197,7 @@ function switchTab(screen) {
   btn.setAttribute("aria-selected", "true");
   document.getElementById("practiceScreen").style.display = screen === "practice" ? "" : "none";
   document.getElementById("printScreen").style.display = screen === "print" ? "" : "none";
+  document.getElementById("aboutScreen").style.display = screen === "about" ? "" : "none";
 }
 
 document.getElementById("mainTabs").addEventListener("click", (e) => {
@@ -1127,7 +1211,7 @@ document.getElementById("mainTabs").addEventListener("click", (e) => {
 (function initTabFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const requested = params.get("tab") || window.location.hash.replace("#", "");
-  if (requested === "print" || requested === "practice") {
+  if (requested === "print" || requested === "practice" || requested === "about") {
     switchTab(requested);
   }
 })();
