@@ -2,6 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מחולל סטים - משחק חמש מילים</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap">
@@ -17,6 +18,7 @@
     --border: #E4DDD0;
     --border-soft: #D9D0C0;
     --good: #2F6F66;
+    --danger: #B3432D;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -30,6 +32,7 @@
       --border: #453F35;
       --border-soft: #504A3E;
       --good: #6FBFAE;
+      --danger: #E08D6F;
     }
   }
   :root[data-theme="dark"] {
@@ -43,15 +46,31 @@
     --border: #453F35;
     --border-soft: #504A3E;
     --good: #6FBFAE;
+    --danger: #E08D6F;
   }
   * { box-sizing: border-box; }
+  button,
+  [role="button"],
+  .word-pill {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .word-pill { animation: none !important; opacity: 1 !important; }
+  }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
     font-family: 'Assistant', 'Segoe UI', system-ui, sans-serif;
     font-size: 19px;
-    padding: 32px 16px 60px;
+    padding: calc(32px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) calc(60px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px));
     display: flex;
     justify-content: center;
   }
@@ -110,6 +129,24 @@
     display: flex;
     gap: 10px;
   }
+  @media (max-width: 560px) {
+    .controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+    .control-group {
+      align-items: stretch;
+      width: 100%;
+    }
+    .seg {
+      width: 100%;
+    }
+    .seg button {
+      flex: 1 1 0;
+      padding-inline: 8px;
+    }
+  }
   .seg button {
     border: 2px solid var(--border);
     background: var(--card);
@@ -167,6 +204,14 @@
     transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
   }
   .word-pill:active { transform: scale(0.96); }
+  .word-pill {
+    opacity: 0;
+    animation: pillIn 0.4s ease forwards;
+  }
+  @keyframes pillIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
   .word-pill.remembered {
     background: var(--accent-soft);
     border: 2px solid var(--accent);
@@ -184,16 +229,31 @@
     font-size: 1.1rem;
     font-weight: 500;
   }
-  .rules-toggle {
-    text-align: center;
-    color: var(--muted);
-    font-weight: 600;
+  .accordion-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 20px;
+    min-height: 44px;
+    color: var(--ink);
+    font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
-    text-decoration: underline;
-    padding: 8px;
-    margin-top: -6px;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+  .accordion-toggle:active { border-color: var(--border-soft); }
+  .accordion-toggle .chevron {
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  .accordion-toggle.open .chevron {
+    transform: rotate(180deg);
   }
   ul.rules {
     font-size: 1rem;
@@ -261,16 +321,6 @@
     font-weight: 600;
     color: var(--accent);
   }
-  .history-toggle {
-    text-align: center;
-    color: var(--muted);
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    text-decoration: underline;
-    padding: 8px;
-    margin-bottom: 10px;
-  }
   .history-header {
     display: flex;
     justify-content: space-between;
@@ -290,7 +340,13 @@
     font-size: 0.95rem;
     text-decoration: underline;
     cursor: pointer;
-    padding: 6px;
+    padding: 0 8px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .clear-history-btn.armed {
+    color: var(--danger);
   }
   .history-empty {
     color: var(--muted);
@@ -298,6 +354,10 @@
     font-size: 1rem;
     text-align: center;
     padding: 8px 0;
+  }
+  #historyList {
+    padding-inline-end: 6px;
+    margin-inline-end: -6px;
   }
   .history-item {
     background: var(--card);
@@ -365,7 +425,14 @@
     cursor: pointer;
     font-weight: 600;
     font-size: 0.95rem;
-    padding: 6px;
+    padding: 0 8px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .history-item .del-btn:hover,
+  .history-item .del-btn:active {
+    color: var(--danger);
   }
 </style>
 </head>
@@ -381,24 +448,24 @@
     <div class="control-group">
       <span class="control-label">כמה מילים</span>
       <div class="seg" id="countSeg">
-        <button data-val="5" class="active">5</button>
-        <button data-val="6">6</button>
-        <button data-val="7">7</button>
-        <button data-val="8">8</button>
+        <button data-val="5" class="active" aria-pressed="true">5</button>
+        <button data-val="6" aria-pressed="false">6</button>
+        <button data-val="7" aria-pressed="false">7</button>
+        <button data-val="8" aria-pressed="false">8</button>
       </div>
     </div>
     <div class="control-group">
       <span class="control-label">רמת קושי</span>
       <div class="seg" id="levelSeg">
-        <button data-val="easy" class="active">קל</button>
-        <button data-val="medium">בינוני</button>
-        <button data-val="hard">מאתגר</button>
+        <button data-val="easy" class="active" aria-pressed="true">קל</button>
+        <button data-val="medium" aria-pressed="false">בינוני</button>
+        <button data-val="hard" aria-pressed="false">מאתגר</button>
       </div>
     </div>
   </div>
 
   <button class="generate-btn" id="genBtn">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.36-6.36L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.36 6.36L3 16"/><path d="M3 21v-5h5"/></svg>
     <span>צור סט חדש</span>
   </button>
 
@@ -411,11 +478,12 @@
   <div class="card score-card" id="scoreCard" style="display:none;">
     <div class="instructions">לחצו על המילים שזכרתם</div>
     <div class="live-count" id="liveCount">0 / 5 זכורות</div>
-    <button id="saveScoreBtn">שמור תוצאה</button>
-    <div class="score-saved-note" id="scoreSavedNote" style="display:none;">✓ נשמר בהיסטוריה</div>
   </div>
 
-  <div class="rules-toggle" id="rulesToggle">למה הסט הזה נבחר? (הצג/הסתר כללים)</div>
+  <div class="accordion-toggle" id="rulesToggle" role="button" tabindex="0" aria-expanded="false" aria-controls="rulesCard">
+    <span>למה הסט הזה נבחר?</span>
+    <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
   <div class="card" id="rulesCard" style="display:none;">
     <ul class="rules">
       <li>כל מילה נבחרת מקטגוריה סמנטית אחרת - כדי למנוע "קיבוץ" קל מדי בזיכרון.</li>
@@ -426,7 +494,10 @@
     </ul>
   </div>
 
-  <div class="history-toggle" id="historyToggle">הצג תוצאות קודמות</div>
+  <div class="accordion-toggle" id="historyToggle" role="button" tabindex="0" aria-expanded="false" aria-controls="historyCardWrap">
+    <span>תוצאות קודמות</span>
+    <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
   <div class="card" id="historyCardWrap" style="display:none;">
     <div class="history-header">
       <h2>תוצאות קודמות</h2>
@@ -455,7 +526,6 @@ const bank = {
 const categories = Object.keys(bank);
 let count = 5;
 let level = "easy";
-const LEVELS = ["easy", "medium", "hard"];
 
 // Seeded PRNG (mulberry32) so a given seed always reproduces the same
 // sequence of "random" draws, which is what makes the set reproducible
@@ -470,25 +540,6 @@ function mulberry32(seed) {
   };
 }
 
-// Packs seed + count + level into one human-shareable number, and back.
-// Encoding count/level into the code (not just the seed) means the code
-// alone fully determines the set, regardless of what's currently selected
-// in the UI.
-function encodeCode(seed, cnt, lvl) {
-  const lvlIdx = LEVELS.indexOf(lvl);
-  return seed * 100 + cnt * 10 + lvlIdx;
-}
-function decodeCode(code) {
-  const lvlIdx = code % 10;
-  const cnt = Math.floor(code / 10) % 10;
-  const seed = Math.floor(code / 100);
-  return {
-    seed,
-    count: [5, 6, 7, 8].includes(cnt) ? cnt : 5,
-    level: LEVELS[lvlIdx] || "easy"
-  };
-}
-
 document.getElementById("countSeg").addEventListener("click", e => {
   if (e.target.tagName !== "BUTTON") return;
   count = parseInt(e.target.dataset.val);
@@ -499,20 +550,32 @@ document.getElementById("levelSeg").addEventListener("click", e => {
   level = e.target.dataset.val;
   setActive("levelSeg", e.target);
 });
-document.getElementById("rulesToggle").addEventListener("click", () => {
-  const c = document.getElementById("rulesCard");
-  c.style.display = c.style.display === "none" ? "block" : "none";
-});
-document.getElementById("historyToggle").addEventListener("click", () => {
-  const c = document.getElementById("historyCardWrap");
-  const showing = c.style.display !== "none";
-  c.style.display = showing ? "none" : "block";
-  document.getElementById("historyToggle").textContent = showing ? "הצג תוצאות קודמות" : "הסתר תוצאות קודמות";
-});
+function toggleAccordion(toggleId, cardId) {
+  const c = document.getElementById(cardId);
+  const toggle = document.getElementById(toggleId);
+  const opening = c.style.display === "none";
+  c.style.display = opening ? "block" : "none";
+  toggle.classList.toggle("open", opening);
+  toggle.setAttribute("aria-expanded", String(opening));
+}
+function onAccordionKey(e, toggleId, cardId) {
+  if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+    e.preventDefault(); // stop the page from scrolling on Space
+    toggleAccordion(toggleId, cardId);
+  }
+}
+document.getElementById("rulesToggle").addEventListener("click", () => toggleAccordion("rulesToggle", "rulesCard"));
+document.getElementById("rulesToggle").addEventListener("keydown", (e) => onAccordionKey(e, "rulesToggle", "rulesCard"));
+document.getElementById("historyToggle").addEventListener("click", () => toggleAccordion("historyToggle", "historyCardWrap"));
+document.getElementById("historyToggle").addEventListener("keydown", (e) => onAccordionKey(e, "historyToggle", "historyCardWrap"));
 
 function setActive(segId, btn) {
-  document.querySelectorAll("#" + segId + " button").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll("#" + segId + " button").forEach(b => {
+    b.classList.remove("active");
+    b.setAttribute("aria-pressed", "false");
+  });
   btn.classList.add("active");
+  btn.setAttribute("aria-pressed", "true");
 }
 
 function shuffle(arr, rng) {
@@ -561,18 +624,33 @@ function generateSet() {
 let currentSet = null; // {code, words, count, level} for the set currently on screen
 const LEVEL_LABELS = { easy: "קל", medium: "בינוני", hard: "מאתגר" };
 const HISTORY_KEY = "fiveWordsHistory";
+const HISTORY_LIMIT = 200; // oldest entries drop off past this so storage doesn't grow forever
 
 function applyGeneratedSet(seed, cnt, lvl) {
   const words = buildSet(seed, cnt, lvl);
   renderWords(words);
-  const code = encodeCode(seed, cnt, lvl);
+  const historyId = Date.now() + "_" + Math.floor(Math.random() * 1e6);
 
-  currentSet = { code, words, count: cnt, level: lvl };
+  currentSet = { words, count: cnt, level: lvl, historyId };
 
   document.getElementById("scoreCard").style.display = "flex";
   updateLiveCount();
-  document.getElementById("scoreSavedNote").style.display = "none";
-  document.getElementById("saveScoreBtn").disabled = false;
+
+  // the set exists now, so it goes into history right away, with 0 words
+  // remembered; clicking a word below updates this same entry in place
+  const history = getHistory();
+  history.unshift({
+    id: historyId,
+    words,
+    count: cnt,
+    level: lvl,
+    remembered: 0,
+    rememberedWords: [],
+    timestamp: Date.now()
+  });
+  if (history.length > HISTORY_LIMIT) history.length = HISTORY_LIMIT;
+  setHistory(history);
+  renderHistory();
 }
 
 function updateLiveCount() {
@@ -629,18 +707,25 @@ function balanceJuiciness(picks, cats, target) {
 function renderWords(words) {
   const area = document.getElementById("wordsArea");
   area.innerHTML = "";
-  words.forEach(w => {
+  words.forEach((w, i) => {
     const el = document.createElement("div");
     el.className = "word-pill";
+    el.style.animationDelay = Math.min(i * 60, 300) + "ms";
     el.textContent = w;
-    el.addEventListener("click", () => {
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("aria-pressed", "false");
+    const toggle = () => {
       el.classList.toggle("remembered");
+      el.setAttribute("aria-pressed", String(el.classList.contains("remembered")));
       updateLiveCount();
-      // a change to which words were remembered means any earlier save is stale
-      const btn = document.getElementById("saveScoreBtn");
-      if (btn.disabled) {
-        btn.disabled = false;
-        document.getElementById("scoreSavedNote").style.display = "none";
+      updateCurrentHistoryEntry();
+    };
+    el.addEventListener("click", toggle);
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+        e.preventDefault(); // stop the page from scrolling on Space
+        toggle();
       }
     });
     area.appendChild(el);
@@ -648,19 +733,6 @@ function renderWords(words) {
 }
 
 document.getElementById("genBtn").addEventListener("click", generateSet);
-
-function loadByCode(code) {
-  const { seed, count: cnt, level: lvl } = decodeCode(code);
-  count = cnt;
-  level = lvl;
-  document.querySelectorAll("#countSeg button").forEach(b => {
-    b.classList.toggle("active", parseInt(b.dataset.val) === cnt);
-  });
-  document.querySelectorAll("#levelSeg button").forEach(b => {
-    b.classList.toggle("active", b.dataset.val === lvl);
-  });
-  applyGeneratedSet(seed, cnt, lvl);
-}
 
 // ---- Recall-score tracking & history ----
 // Stored locally in this browser for now; when the app moves to Supabase
@@ -682,18 +754,15 @@ function setHistory(arr) {
   }
 }
 
-function saveScore(rememberedWords) {
+function updateCurrentHistoryEntry() {
   if (!currentSet) return;
+  const rememberedWords = Array.from(document.querySelectorAll("#wordsArea .word-pill.remembered"))
+    .map(el => el.textContent);
   const history = getHistory();
-  history.unshift({
-    code: currentSet.code,
-    words: currentSet.words,
-    count: currentSet.count,
-    level: currentSet.level,
-    remembered: rememberedWords.length,
-    rememberedWords: rememberedWords,
-    timestamp: Date.now()
-  });
+  const entry = history.find(e => e.id === currentSet.historyId);
+  if (!entry) return;
+  entry.remembered = rememberedWords.length;
+  entry.rememberedWords = rememberedWords;
   setHistory(history);
   renderHistory();
 }
@@ -742,16 +811,6 @@ function renderHistory() {
   });
 }
 
-const saveScoreBtn = document.getElementById("saveScoreBtn");
-saveScoreBtn.addEventListener("click", () => {
-  if (!currentSet || saveScoreBtn.disabled) return;
-  const rememberedWords = Array.from(document.querySelectorAll("#wordsArea .word-pill.remembered"))
-    .map(el => el.textContent);
-  saveScore(rememberedWords);
-  document.getElementById("scoreSavedNote").style.display = "block";
-  saveScoreBtn.disabled = true; // prevent duplicate saves of the same result
-});
-
 let clearArmed = false;
 let clearArmTimer = null;
 const clearHistoryBtn = document.getElementById("clearHistoryBtn");
@@ -760,14 +819,17 @@ clearHistoryBtn.addEventListener("click", () => {
   if (!clearArmed) {
     clearArmed = true;
     clearHistoryBtn.textContent = "לאשר מחיקת הכל?";
+    clearHistoryBtn.classList.add("armed");
     clearArmTimer = setTimeout(() => {
       clearArmed = false;
       clearHistoryBtn.textContent = "נקה היסטוריה";
+      clearHistoryBtn.classList.remove("armed");
     }, 4000);
   } else {
     clearTimeout(clearArmTimer);
     clearArmed = false;
     clearHistoryBtn.textContent = "נקה היסטוריה";
+    clearHistoryBtn.classList.remove("armed");
     setHistory([]);
     renderHistory();
   }
